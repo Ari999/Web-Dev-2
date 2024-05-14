@@ -382,7 +382,7 @@ app.get('/merch', authenticateJWT, async (req, res) => {
         const query = 'SELECT id, url, typeofmerch, description FROM pokemon_merch';
         const result = await pool.query(query);
 
-        console.log('Result rows:', result.rows); // Log the retrieved rows to check
+        //console.log('Result rows:', result.rows); // Log the retrieved rows to check
 
         const rows = result.rows;
         res.render('merch', { rows }); // Render 'merch.handlebars' with data
@@ -466,13 +466,13 @@ app.post('/account/login', async (req, res) => {
         const user = result.rows[0]; // Get the first user (if exists) from the query result
 
         if (!user) {
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).render('errorLogin');
         }
 
         // Compare hashed password with bcrypt
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).render('errorLogin');
         }
 
         // Generate JWT token
@@ -485,7 +485,7 @@ app.post('/account/login', async (req, res) => {
         res.redirect('/home');
     } catch (error) {
         console.error('Error logging in:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).render('errorLogin');
     }
 });
 
