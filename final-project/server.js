@@ -78,7 +78,7 @@ const redirectToHomeIfLoggedIn = (req, res, next) => {
 };
 
 // Function to import data from CSV into the specified table
-/* //this function does not insert, skips straight into else statement for some reason.
+
 async function importCSVData(tableName, csvFilePath) {
     console.log(`Importing data into table ${tableName} from file: ${csvFilePath}`);
 
@@ -95,7 +95,7 @@ async function importCSVData(tableName, csvFilePath) {
 
                 try {
                     // Check if the row already exists in the specified table
-                    const checkQuery = `SELECT COUNT(*) FROM ${tableName} WHERE "url" = $1`;
+                    const checkQuery = `SELECT * FROM ${tableName} WHERE "url" = $1`;
                     const { rowCount } = await client.query(checkQuery, [row.URL]);
 
                     if (rowCount === 0) {
@@ -123,7 +123,26 @@ async function importCSVData(tableName, csvFilePath) {
         client.release();
     }
 }
-*/
+
+async function initializeDataImport() {
+    try {
+        // Create the Pokemon games table
+        await createPokemonGamesTable();
+
+        // Once the games table is created, import data from CSV for Pokemon games
+        await importCSVData('pokemon_games', './public/data/Pokemon_Games.csv');
+
+        // Create the Pokemon merchandise table
+        await createPokemonMerchTable();
+
+        // Once the merchandise table is created, import data from CSV for Pokemon merchandise
+        await importCSVData('pokemon_merch', './public/data/Pokemon_Merch.csv');
+
+        console.log('Data import completed successfully.');
+    } catch (error) {
+        console.error('Error during data initialization:', error);
+    }
+}
 
 // Function to create the users table
 async function createUsersTable() {
@@ -677,12 +696,12 @@ app.post('/store-merch', authenticateJWT, async (req, res) => {
         }
     });
 
-createPokemonGamesTable();
-createPokemonMerchTable();
+//createPokemonGamesTable();
+//createPokemonMerchTable();
 createUsersTable();
 //importCSVData('pokemon_games', './public/data/Pokemon_Games.csv');
 //importCSVData('pokemon_merch', './public/data/Pokemon_Merch.csv');
-//initializeDataImport();
+initializeDataImport();
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/welcome`);
