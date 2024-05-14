@@ -78,7 +78,8 @@ const redirectToHomeIfLoggedIn = (req, res, next) => {
 };
 
 // Function to import data from CSV into the specified table
-/*async function importCSVData(tableName, csvFilePath) {
+/* //this function does not insert, skips straight into else statement for some reason.
+async function importCSVData(tableName, csvFilePath) {
     console.log(`Importing data into table ${tableName} from file: ${csvFilePath}`);
 
     const client = await pool.connect();
@@ -107,7 +108,7 @@ const redirectToHomeIfLoggedIn = (req, res, next) => {
                         await client.query(insertQuery, values);
                         console.log(`Inserted row for URL: ${row.URL} into table ${tableName}`);
                     } else {
-                        //console.log(`Row for URL: ${row.URL} already exists in table ${tableName}, skipping insertion`);
+                        console.log(`Row for URL: ${row.URL} already exists in table ${tableName}, skipping insertion`);
                     }
                 } catch (error) {
                     console.error(`Error processing row for URL: ${row.URL} in table ${tableName}`, error);
@@ -679,10 +680,9 @@ app.post('/store-merch', authenticateJWT, async (req, res) => {
 createPokemonGamesTable();
 createPokemonMerchTable();
 createUsersTable();
-//createMyGamesTable();
-//createMyMerchTable();
 //importCSVData('pokemon_games', './public/data/Pokemon_Games.csv');
 //importCSVData('pokemon_merch', './public/data/Pokemon_Merch.csv');
+//initializeDataImport();
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/welcome`);
